@@ -1,11 +1,11 @@
 package com.sostrenegrene;
 
-import com.sostrenegrene.stores.GetStores;
-import com.sostrenegrene.vemcount.Request;
+import com.sostrenegrene.database.DB_Writer;
+import com.sostrenegrene.kundetelling_no.RunKundetelling;
+import com.sostrenegrene.vemcount.RunVemcount;
 import dk.mudlogic.tools.database.MSSql;
 import dk.mudlogic.tools.log.LogFactory;
 import dk.mudlogic.tools.log.LogTracer;
-import dk.mudlogic.tools.threads.ThreadsUtils;
 
 import java.sql.SQLException;
 import java.util.Hashtable;
@@ -30,28 +30,11 @@ public class Main {
         //Open db connection
         db_Connect();
 
-        run();
-    }
+        //Clear table if selected
+        if (Main.OPTIONS.get("clear").equals("1")) { new DB_Writer(Main.SQL).clearDB(); }
 
-    private static void run() {
-        GetStores getstores = new GetStores();
-        int[] ids = getstores.getStore_ids();
-        ids = new int[]{9564};
-
-        for (int i=0; i<ids.length; i++) {
-            int id = ids[i];
-            Request req = new Request(Main.OPTIONS,id);
-
-            try {
-                //log.trace(req.getResult().toJSONString());
-            }
-            catch(Exception e) {
-                log.warning("result was null");
-            }
-
-            new ThreadsUtils().sleep(1);
-        }
-
+        new RunKundetelling(Main.OPTIONS);
+        new RunVemcount(Main.OPTIONS);
     }
 
     /** Connect to database, for saving data
@@ -81,12 +64,21 @@ public class Main {
         Main.OPTIONS.put("password","Grenes1234");
         Main.OPTIONS.put("db_host","localhost\\SQLEXPRESS");
         Main.OPTIONS.put("database","Toolbox");
-        Main.OPTIONS.put("days","5");
+        Main.OPTIONS.put("days","31");
         //Main.OPTIONS.put("from","-6");
         //Main.OPTIONS.put("to","-5");
         Main.OPTIONS.put("clear","1");
         Main.OPTIONS.put("sleep_timer","1");
 
+        vemcountOptions();
+        kundetellingOptions();
+
+    }
+
+    /** Standard options for vemcount.com
+     *
+     */
+    private static void vemcountOptions() {
         //API url
         Main.OPTIONS.put("vemcount_api_url","https://login.vemcount.com/api/fetch_data/");
         //API key
@@ -99,6 +91,18 @@ public class Main {
         Main.OPTIONS.put("vemcount_api_group_by","mac_id");
         //API data limit
         Main.OPTIONS.put("vemcount_api_data_limit","10000");
+    }
+
+    /** Standard options for kundetelling.no
+     *
+     */
+    private static void kundetellingOptions() {
+        //API url
+        Main.OPTIONS.put("kundetelling_api_url","http://www.kundetelling.no/ws/publicservice.asmx/ExportAll");
+        //API key
+        Main.OPTIONS.put("kundetelling_api_username","kundeteller@sostrenegrene.com");
+        //API search type
+        Main.OPTIONS.put("kundetelling_api_password","8RUEnL");
 
     }
 
@@ -118,6 +122,7 @@ public class Main {
             if (s.contains("-to"))          { Main.OPTIONS.put("to",s.substring(s.indexOf(":")+1)); }
             if (s.contains("-days"))        { Main.OPTIONS.put("days",s.substring(s.indexOf(":")+1)); }
             if (s.contains("-clear"))       { Main.OPTIONS.put("clear",s.substring(s.indexOf(":")+1)); }
+            if (s.contains("-shops"))       { Main.OPTIONS.put("shops",s.substring(s.indexOf(":")+1)); }
 
         }
 

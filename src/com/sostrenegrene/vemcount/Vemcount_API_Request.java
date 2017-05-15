@@ -12,10 +12,10 @@ import org.json.simple.parser.ParseException;
 /**
  * Created by soren.pedersen on 12-04-2017.
  */
-public class API_Request {
+public class Vemcount_API_Request {
 
     private LogTracer log = new LogFactory().tracer();
-    private HttpQuery web = new HttpQuery();
+    private HttpQuery web = new HttpQuery(false);
 
     private String dataset;
     private String response;
@@ -23,8 +23,8 @@ public class API_Request {
     private boolean response_success;
     private boolean request_overload = false;
 
-    public API_Request(String dataset) {
-        log.setTracerTitle(API_Request.class);
+    public Vemcount_API_Request(String dataset) {
+        log.setTracerTitle(Vemcount_API_Request.class);
 
         this.dataset = dataset;
 
@@ -48,7 +48,7 @@ public class API_Request {
         return response_success;
     }
 
-    /** Request overload on server
+    /** RequestVemcount overload on server
      *
      * @return boolean
      */
@@ -81,6 +81,13 @@ public class API_Request {
                 response_success = false;
                 request_overload = true;
 
+                log.warning("Response Status: " + web.getResponseCode() + " " + web.getResponseMessage());
+                break;
+
+            case 504:
+                //Gateway timeout (act like overload)
+                response_success = false;
+                request_overload = true;
                 log.error("Response Status: " + web.getResponseCode() + " " + web.getResponseMessage());
                 break;
 
@@ -89,7 +96,7 @@ public class API_Request {
                 request_overload = false;
                 response_json = response_toJSON(response);
 
-                log.error("Response Status: " + web.getResponseCode() + " " + web.getResponseMessage());
+                log.info("Response Status: " + web.getResponseCode() + " " + web.getResponseMessage());
                 break;
         }
 

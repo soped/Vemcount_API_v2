@@ -1,4 +1,4 @@
-package com.sostrenegrene.vemcount;
+package com.sostrenegrene.StoreData;
 
 import dk.mudlogic.tools.log.LogFactory;
 import dk.mudlogic.tools.log.LogTracer;

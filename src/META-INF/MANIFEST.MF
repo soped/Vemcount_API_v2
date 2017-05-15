@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: commons-lang3-3.4.jar ToolsLib.jar sqljdbc4.jar json-simpl
+ e-1.1.1.jar
+Main-Class: com.sostrenegrene.Main
+

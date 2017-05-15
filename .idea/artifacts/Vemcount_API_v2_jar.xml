@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="Vemcount_API_v2:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Vemcount_API_v2_jar</output-path>
+    <root id="root">
+      <element id="archive" name="Vemcount_API_v2.jar">
+        <element id="module-output" name="Vemcount_API_v2" />
+      </element>
+      <element id="library" level="project" name="commons-lang3-3.4" />
+      <element id="library" level="project" name="ToolsLib" />
+      <element id="library" level="project" name="sqljdbc4" />
+      <element id="library" level="project" name="json-simple-1.1.1" />
+    </root>
+  </artifact>
+</component>
